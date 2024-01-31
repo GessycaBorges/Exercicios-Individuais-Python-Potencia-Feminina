@@ -1,0 +1,40 @@
+from Banco import Conta_corrente, Cliente_mulher, Cliente_homem
+
+conta = Conta_corrente()
+outra_conta = Conta_corrente()
+mais_uma_conta = Conta_corrente()
+
+cliente = Cliente_mulher("Ana", "999999999", 1500, conta.numero_da_conta)
+cliente_homem = Cliente_homem("João", "997777777", 1000, outra_conta.numero_da_conta)
+outra_cliente = Cliente_mulher("Maria", "988888888", 1000, mais_uma_conta.numero_da_conta)
+
+cliente.consultar_dados_cliente()
+outra_cliente.consultar_dados_cliente()
+cliente_homem.consultar_dados_cliente()
+print('---------------------------------------------------------------------')
+
+conta.operacoes("sacar", 300, cliente)
+print('---------------------------------------------------------------------')
+conta.operacoes("depositar", 600, cliente)
+print('---------------------------------------------------------------------')
+conta.consultar_operacoes()
+cliente.consultar_saldo()
+print('---------------------------------------------------------------------')
+
+outra_conta.operacoes("sacar", 300, cliente_homem)
+print('---------------------------------------------------------------------')
+outra_conta.operacoes("depositar", 600, cliente_homem)
+print('---------------------------------------------------------------------')
+outra_conta.operacoes("sacar", 300, cliente_homem)
+print('---------------------------------------------------------------------')
+outra_conta.consultar_operacoes()
+cliente_homem.consultar_saldo()
+print('---------------------------------------------------------------------')
+
+mais_uma_conta.operacoes("sacar", 300, outra_cliente)
+print('---------------------------------------------------------------------')
+mais_uma_conta.operacoes("depositar", 600, outra_cliente)
+print('---------------------------------------------------------------------')
+mais_uma_conta.consultar_operacoes()
+outra_cliente.consultar_saldo()
+print('---------------------------------------------------------------------')
