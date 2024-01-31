@@ -1,18 +1,6 @@
-# Modele um sistema orientado a objetos para representar contas correntes do Banco Delas seguindo os requisitos abaixo.
+from abc import ABC, abstractmethod
 
-# 1. Cada conta corrente pode ter um ou mais clientes como titular.
-# 2. O banco controla apenas o nome, o telefone e a renda mensal de cada cliente.
-# 3. A conta corrente apresenta um saldo e uma lista de operações de saques e depósitos.
-#    Quando a cliente fizer um saque, diminuiremos o saldo da conta corrente. Quando ela 
-#    fizer um depósito, aumentaremos o saldo.
-# 4. Clientes mulheres possuem em suas contas um cheque especial de valor igual à sua renda
-#    mensal, ou seja, elas podem sacar valores que deixam a sua conta com valor negativo até
-#    -renda_mensal.
-# 5. Clientes homens por enquanto não têm direito a cheque especial.
-
-# Para modelar seu sistema, utilize obrigatoriamente os conceitos "classe", "herança", "propriedades", "encapsulamento" e "classe abstrata".
-
-class Cliente:
+class Cliente(ABC):
     def __init__(self, nome, telefone, renda_mensal, numero_da_conta):
         self._nome = nome
         self._telefone = telefone
@@ -22,29 +10,26 @@ class Cliente:
         self.deposito_realizado = False
         self.saldo = 0
 
+    @abstractmethod
     def sacar(self, valor_do_saque):
-        if valor_do_saque <= self.saldo:
-            self.saldo -= valor_do_saque
-            print(f'O saque no valor de R${valor_do_saque:.2f} foi realizado com sucesso \n')
-            self.saque_realizado = True
-            return self.consultar_saldo()
-        else:
-            print(f'Não foi possível sacar R${valor_do_saque:.2f} \n')
-            self.saque_realizado = False
-            return self.consultar_saldo()
+        pass
 
+    @abstractmethod
     def depositar(self, valor_do_deposito):
-        if valor_do_deposito >= 0:
-            self.saldo += valor_do_deposito
-            print(f'O depósito no valor de R${valor_do_deposito:.2f} foi realizado com sucesso \n')
-            self.deposito_realizado = True
-            return self.consultar_saldo()
-        else:
-            self.deposito_realizado = False
-            print('Valor inválido.')
+        pass
 
+    @abstractmethod
     def consultar_saldo(self):
-        print(f'Saldo disponível: R${self.saldo:.2f}')
+        pass
+
+    def consultar_dados_cliente(self):
+        print(f'''
+            Dados do(a) cliente
+            Nome: {self._nome}
+            Telefone: {self._telefone}
+            Renda Mensal: R${self._renda_mensal:.2f}
+            Conta: {'{:0>5}'.format(self._numero_da_conta)}
+        ''')
 
 class Cliente_mulher(Cliente):
     def __init__(self, nome, telefone, renda_mensal, numero_da_conta):
@@ -102,6 +87,40 @@ class Cliente_mulher(Cliente):
     def consultar_saldo(self):
         print(f'Saldo disponível:\n * Saldo: R${self.saldo:.2f} \n * Cheque especial: R${self.cheque_especial:.2f}.')
 
+class Cliente_homem(Cliente):
+    def __init__(self, nome, telefone, renda_mensal, numero_da_conta):
+        self._nome = nome
+        self._telefone = telefone
+        self._renda_mensal = renda_mensal
+        self._numero_da_conta = numero_da_conta
+        self.saque_realizado = False
+        self.deposito_realizado = False
+        self.saldo = 0
+
+    def sacar(self, valor_do_saque):
+        if valor_do_saque <= self.saldo:
+            self.saldo -= valor_do_saque
+            print(f'O saque no valor de R${valor_do_saque:.2f} foi realizado com sucesso \n')
+            self.saque_realizado = True
+            return self.consultar_saldo()
+        else:
+            print(f'Não foi possível sacar R${valor_do_saque:.2f} \n')
+            self.saque_realizado = False
+            return self.consultar_saldo()
+
+    def depositar(self, valor_do_deposito):
+        if valor_do_deposito >= 0:
+            self.saldo += valor_do_deposito
+            print(f'O depósito no valor de R${valor_do_deposito:.2f} foi realizado com sucesso \n')
+            self.deposito_realizado = True
+            return self.consultar_saldo()
+        else:
+            self.deposito_realizado = False
+            print('Valor inválido.')
+
+    def consultar_saldo(self):
+        print(f'Saldo disponível: R${self.saldo:.2f}')
+
 class Conta_corrente():
     numero_da_conta = 0
 
@@ -135,32 +154,3 @@ class Conta_corrente():
     def consultar_operacoes(self):
         for operacao in self.registro_de_operacao:
             print(operacao)
-
-        
-
-
-
-conta = Conta_corrente()
-cliente = Cliente_mulher("Ana", "999999999", 1500, conta)
-outra_cliente = Cliente_mulher("Maria", "988888888", 1000, conta)
-
-outra_conta = Conta_corrente()
-cliente_homem = Cliente("João", "997777777", 1000, outra_conta)
-
-conta.operacoes("sacar", 300, cliente)
-print('----------------')
-conta.operacoes("depositar", 600, cliente)
-print('----------------')
-conta.operacoes("sacar", 300, outra_cliente)
-print('----------------')
-conta.operacoes("depositar", 600, outra_cliente)
-print('----------------')
-
-outra_conta.operacoes("sacar", 300, cliente_homem)
-print('----------------')
-outra_conta.operacoes("depositar", 600, cliente_homem)
-print('----------------')
-outra_conta.operacoes("sacar", 300, cliente_homem)
-print('----------------')
-
-outra_conta.consultar_operacoes()
